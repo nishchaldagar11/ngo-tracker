@@ -1,7 +1,8 @@
 import axios from "axios";
 
+// ✅ Dynamic base URL (dev + production)
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
 });
 
 
@@ -9,7 +10,6 @@ const API = axios.create({
 API.interceptors.request.use(
   (req) => {
 
-    // 🔥 FIXED: get token from user object
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (user?.token) {
@@ -34,7 +34,6 @@ API.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       console.log("Token expired. Logging out...");
 
-      // remove both just in case
       localStorage.removeItem("token");
       localStorage.removeItem("user");
 
