@@ -15,7 +15,6 @@ dotenv.config();
 
 const app = express();
 
-
 // =======================
 // CONNECT DB
 // =======================
@@ -33,16 +32,24 @@ app.use(express.json());
 // ROUTES
 // =======================
 app.use("/api/auth", authRoutes);
-app.use("/api/events", eventRoutes);      // 🔥 IMPORTANT
+app.use("/api/events", eventRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api", dashboardRoutes);
 
 
 // =======================
-// HOME ROUTE
+// HOME ROUTE (IMPORTANT)
 // =======================
 app.get("/", (req, res) => {
-  res.send("NGO Tracker API Running...");
+  res.status(200).send("NGO Tracker API Running 🚀");
+});
+
+
+// =======================
+// HEALTH CHECK (RENDER FIX)
+// =======================
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
 });
 
 
@@ -64,7 +71,19 @@ app.get("/api/admin-only", protect, authorizeRoles("admin"), (req, res) => {
 
 
 // =======================
-// SERVER START
+// ERROR HANDLER (VERY IMPORTANT)
+// =======================
+app.use((err, req, res, next) => {
+  console.error("❌ Error:", err.message);
+  res.status(500).json({
+    message: "Server Error",
+    error: err.message,
+  });
+});
+
+
+// =======================
+// SERVER START (RENDER FIX)
 // =======================
 const PORT = process.env.PORT || 5000;
 
