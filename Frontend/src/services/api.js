@@ -5,17 +5,15 @@ const API = axios.create({
 });
 
 
-// =============================
-// REQUEST INTERCEPTOR
-// Automatically attach token
-// =============================
+// ================= REQUEST INTERCEPTOR =================
 API.interceptors.request.use(
   (req) => {
 
-    const token = localStorage.getItem("token");
+    // 🔥 FIXED: get token from user object
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    if (token) {
-      req.headers.Authorization = `Bearer ${token}`;
+    if (user?.token) {
+      req.headers.Authorization = `Bearer ${user.token}`;
     }
 
     return req;
@@ -26,10 +24,7 @@ API.interceptors.request.use(
 );
 
 
-// =============================
-// RESPONSE INTERCEPTOR
-// Auto logout if token expired
-// =============================
+// ================= RESPONSE INTERCEPTOR =================
 API.interceptors.response.use(
   (response) => {
     return response;
@@ -37,10 +32,11 @@ API.interceptors.response.use(
   (error) => {
 
     if (error.response && error.response.status === 401) {
-
       console.log("Token expired. Logging out...");
 
+      // remove both just in case
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
 
       window.location.href = "/login";
     }
@@ -48,6 +44,5 @@ API.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 export default API;

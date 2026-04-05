@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import connectDB from "./config/db.js";
+
 import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
@@ -14,25 +15,40 @@ dotenv.config();
 
 const app = express();
 
-// Connect DB
+
+// =======================
+// CONNECT DB
+// =======================
 connectDB();
 
-// Middleware
+
+// =======================
+// MIDDLEWARE
+// =======================
 app.use(cors());
 app.use(express.json());
 
-// Routes
+
+// =======================
+// ROUTES
+// =======================
 app.use("/api/auth", authRoutes);
-app.use("/api/events", eventRoutes);
+app.use("/api/events", eventRoutes);      // 🔥 IMPORTANT
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api", dashboardRoutes);
 
-// Home route
+
+// =======================
+// HOME ROUTE
+// =======================
 app.get("/", (req, res) => {
   res.send("NGO Tracker API Running...");
 });
 
-// Protected test route
+
+// =======================
+// TEST ROUTES
+// =======================
 app.get("/api/protected", protect, (req, res) => {
   res.json({
     message: "You accessed protected route!",
@@ -40,15 +56,18 @@ app.get("/api/protected", protect, (req, res) => {
   });
 });
 
-// Admin only route
 app.get("/api/admin-only", protect, authorizeRoles("admin"), (req, res) => {
   res.json({
     message: "Welcome Admin 🔥",
   });
 });
 
+
+// =======================
+// SERVER START
+// =======================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

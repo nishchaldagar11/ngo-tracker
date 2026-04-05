@@ -1,80 +1,74 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 
 export default function AttendancePage() {
 
-  const { eventId } = useParams();
+  const { id } = useParams();
 
   const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  const markAttendance = async () => {
-
-    if (!name) {
-      alert("Please enter your name");
-      return;
-    }
-
+  const handleSubmit = async () => {
     try {
 
-      const res = await axios.post(
-        "http://192.168.29.26:5000/api/attendance",
-        {
-          name: name,
-          eventId: eventId
-        }
-      );
+      await API.post("/attendance/public", {
+        eventId: id,
+        name,
+        email
+      });
 
-      setMessage("✅ Attendance Marked Successfully!");
-
-      setName("");
+      setSubmitted(true);
 
     } catch (error) {
-
       console.log(error);
-
-      setMessage("❌ Error marking attendance");
-
+      alert("Error ❌");
     }
-
   };
 
+  if (submitted) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <h2 className="text-2xl font-bold text-green-600">
+          Attendance Marked ✅
+        </h2>
+      </div>
+    );
+  }
+
   return (
+    <div className="h-screen flex items-center justify-center bg-gray-100">
 
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded shadow w-80">
 
-      <div className="bg-white p-8 rounded-xl shadow-lg w-80 text-center">
-
-        <h1 className="text-xl font-bold mb-4">
-          Volunteer Attendance
-        </h1>
+        <h2 className="text-xl font-bold mb-4 text-center">
+          Mark Attendance
+        </h2>
 
         <input
-          type="text"
-          placeholder="Enter your name"
-          className="border p-2 w-full mb-4 rounded"
+          className="border p-2 w-full mb-3"
+          placeholder="Enter Name"
           value={name}
           onChange={(e)=>setName(e.target.value)}
         />
 
-        <button
-          onClick={markAttendance}
-          className="bg-green-500 text-white px-4 py-2 rounded w-full"
-        >
-          Mark Attendance
-        </button>
+        <input
+          className="border p-2 w-full mb-3"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e)=>setEmail(e.target.value)}
+        />
 
-        {message && (
-          <p className="mt-4 text-sm">
-            {message}
-          </p>
-        )}
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-500 text-white w-full p-2 rounded"
+        >
+          Submit
+        </button>
 
       </div>
 
     </div>
-
   );
-
 }

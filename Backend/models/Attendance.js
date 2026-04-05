@@ -9,11 +9,21 @@ const attendanceSchema = new mongoose.Schema(
     index: true,
   },
 
+  // 🔥 OPTIONAL USER (agar login wala use kare)
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
-    index: true,
+    default: null
+  },
+
+  // 🔥 PUBLIC FORM FIELDS
+  name: {
+    type: String,
+  },
+
+  email: {
+    type: String,
+    lowercase: true,
   },
 
   status: {
@@ -28,7 +38,7 @@ const attendanceSchema = new mongoose.Schema(
 }
 );
 
-// prevent duplicate attendance
-attendanceSchema.index({ event: 1, user: 1 }, { unique: true });
+// 🔥 REMOVE OLD UNIQUE (important)
+// attendanceSchema.index({ event: 1, user: 1 }, { unique: true });
 
 export default mongoose.model("Attendance", attendanceSchema);

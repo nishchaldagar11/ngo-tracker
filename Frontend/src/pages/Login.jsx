@@ -10,17 +10,23 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    try {
-      await login(email, password);
-      navigate("/");
-    } catch (err) {
-      console.log(err.response?.data || err.message);
-      alert("Login failed");
-    }
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await login(email, password);
+
+    console.log("LOGIN RESPONSE:", res);
+
+    // 🔥 FORCE REDIRECT
+    window.location.replace("/");
+
+  } catch (err) {
+    console.log("LOGIN ERROR:", err.response?.data || err.message);
+    alert("Login failed");
+  }
+};
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">

@@ -21,6 +21,13 @@ const eventSchema = new mongoose.Schema(
     type: String,
   },
 
+  // New field
+  program: {
+    type: String,
+    enum: ["dashboard", "cip", "achal", "stemora", "paltan"],
+    default: "dashboard"
+  },
+  
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"

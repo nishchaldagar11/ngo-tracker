@@ -1,30 +1,20 @@
 import mongoose from "mongoose";
 
-const archivedEventSchema = new mongoose.Schema({
-
-  title: String,
-
-  description: String,
-
-  date: Date,
-
-  location: String,
-
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+const archivedEventSchema = new mongoose.Schema(
+  {
+    name: String,
+    description: String,
+    date: Date,
+    location: String,
+    program: String,
+    createdBy: mongoose.Schema.Types.ObjectId,
+    archivedAt: Date,
+    archivedBy: mongoose.Schema.Types.ObjectId,
   },
-
-  archivedAt: {
-    type: Date,
-    default: Date.now
-  },
-
-  archivedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+  {
+    timestamps: true,
+    collection: "archivedevents"  // ⭐ FORCE SAME COLLECTION
   }
-
-}, { timestamps: true });
+);
 
 export default mongoose.model("ArchivedEvent", archivedEventSchema);
