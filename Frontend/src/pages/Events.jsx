@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../services/api";
-import QRCode from "qrcode.react";
+import QRCode from "react-qr-code";
 
 export default function Events() {
 
