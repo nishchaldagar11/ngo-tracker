@@ -1,56 +1,63 @@
 import { useEffect } from "react";
-import { Html5Qrcode } from "html5-qrcode";
 import API from "../services/api";
 
 export default function QRScanner() {
 
   useEffect(() => {
+    let scanner;
 
-    const scanner = new Html5Qrcode("reader");
+    import("html5-qrcode")
+      .then(({ Html5Qrcode }) => {
 
-    scanner.start(
-      { facingMode: "environment" }, // back camera
-      {
-        fps: 10,
-        qrbox: 250,
-      },
-      async (decodedText) => {
-        try {
-          console.log("QR DATA:", decodedText);
+        scanner = new Html5Qrcode("reader");
 
-          const data = JSON.parse(decodedText);
+        scanner.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: 250,
+          },
+          async (decodedText) => {
+            try {
+              console.log("QR DATA:", decodedText);
 
-          const res = await API.post("/attendance/mark", {
-            eventId: data.eventId,
-            volunteerId: data.volunteerId
-          });
+              const data = JSON.parse(decodedText);
 
-          alert(res.data.message);
+              const res = await API.post("/attendance/mark", {
+                eventId: data.eventId,
+                volunteerId: data.volunteerId,
+              });
 
-        } catch (err) {
-          alert("Invalid QR");
-        }
-      },
-      (errorMessage) => {
-        // ignore scan errors
-      }
-    );
+              alert(res.data.message);
+
+            } catch (err) {
+              alert("Invalid QR");
+            }
+          },
+          () => {
+            // ignore scan errors
+          }
+        );
+      })
+      .catch((err) => {
+        console.error("QR Scanner load failed:", err);
+      });
 
     return () => {
-      scanner.stop().catch(() => {});
+      if (scanner) {
+        scanner.stop().catch(() => {});
+      }
     };
 
   }, []);
 
   return (
     <div className="p-6">
-
       <h1 className="text-2xl font-bold mb-4">
         Scan QR Code
       </h1>
 
       <div id="reader" style={{ width: "300px" }} />
-
     </div>
   );
 }
